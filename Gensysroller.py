@@ -1,6 +1,6 @@
 import random
 
-# Lists of dice and their possible outcomes
+# Lists of dice used and their possible outcomes
 boost = ['','','X','XA','AA','A']
 setback = ['','','F','F','T','T']
 ability = ['','X','X','XX','A','A','XA','AA']
@@ -29,6 +29,12 @@ class GenesysDiceRoller:
         self.cdice = diceArray[5]   # CHALLENGE
 
     def displayResults(self):
+        """
+        Determines how well the user did on the dice roll and then displays
+        those results to the user via the console
+        :return: Nothing
+        """
+        print("")
         rolled = 'Dice Rolled => (B/S/A/D/P/C):({}/{}/{}/{}/{}/{})'.format\
             (self.bdice,self.sdice,self.adice,self.ddice,self.pdice,self.cdice)
         print(rolled)
@@ -41,25 +47,51 @@ class GenesysDiceRoller:
         self.__rollDice(self.cdice, challenge)  # CHALLENGE
 
 
-        # PRINT OUT RESULTS
+        # PRINT OUT RESULTS FROM THE DICE ROLLING
         print("You rolled the following => ", self.__displayDiceRolled)
+        print("")
         print("Detailed Results")
-        print("Successes = ", str(self.__success))
-        print("Advantages = ", str(self.__advantages))
-        print("Failures = ", str(self.__failure))
-        print("Threats = ", str(self.__threat))
-        print("Triumps = ", str(self.__triump))
-        print("Displair = ", str(self.__dispair))
 
+        goodResults = "Success = {}     Advantages = {}     Triumps = {}".format(self.__success, self.__advantages, self.__triump)
+        badResults  = "Failure = {}     Threats    = {}     Dispairs = {}".format(self.__failure, self.__threat, self.__dispair)
+        # NET RESULTS SECTION
+        netResults  = ""
+        if (self.__netSuccess < 0):
+            netResults += "Dice rolled resulted in a failure. It had {} net failures".format(abs(self.__netSuccess))
+        elif (self.__netSuccess == 0):
+            netResults += "Dice rolled did not fail or succeed since it has 0 net successes"
+        else:
+            netResults += "Dice rolled results in a success. It had {} successes ".format(self.__netSuccess)
+        if (self.__netAdvantages < 0):
+            netResults += " and {} threats".format(abs(self.__netAdvantages))
+        else:
+            netResults += " and {} advantages".format(self.__netAdvantages)
+
+        # Lets print out the final results
+        print(goodResults)
+        print(badResults)
+        print("")
+        print(netResults)
 
     def __rollDice(self, times, type):
+        """
+        Rolls dice from the type list number of times
+        :param times: Number of dice being rolled
+        :param type:  Dice List
+        :return:
+        """
         if (times != 0):
             for times in range(1, times + 1):
                 dice = random.randint(0, len(type) - 1)
                 rolled = type[dice]
                 self.__determineResults(rolled)
 
-    def __determineResults(self, rolled: object) -> object:
+    def __determineResults(self, rolled: object):
+        """
+        Takes a string of what was rolled and then interpret them so then it can be displayed correctly
+        :param rolled: list of what was rolled that needs to be interpreted
+        :return:
+        """
         self.__displayDiceRolled.append(rolled)
         if (rolled == ''):
             return
