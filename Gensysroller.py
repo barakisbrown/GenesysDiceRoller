@@ -1,12 +1,5 @@
 import random
-
-# Lists of dice used and their possible outcomes
-boost = ['','','X','XA','AA','A']
-setback = ['','','F','F','T','T']
-ability = ['','X','X','XX','A','A','XA','AA']
-difficulty = ['','F','FF','T','T','T','TT','FT']
-proficiency = ['','X','X','XX','XX','A','XA','XA','XA','AA','AA','TP']
-challenge = ['', 'F', 'F', 'FF', 'FF', 'T', 'T', 'FT', 'FT', 'TT', 'TT', 'DR']
+from lookuptable import *
 
 
 class GenesysDiceRoller:
@@ -20,13 +13,13 @@ class GenesysDiceRoller:
     __netAdvantages = 0
     __displayDiceRolled = []
 
-    def __init__(self,diceArray):
-        self.bdice = diceArray[0]   # BOOST
-        self.sdice = diceArray[1]   # SETBACK
-        self.adice = diceArray[2]   # ABILITY
-        self.ddice = diceArray[3]   # DIFFICULTY
-        self.pdice = diceArray[4]   # PROFICIENCY
-        self.cdice = diceArray[5]   # CHALLENGE
+    def __init__(self, diceArray):
+        self.bdice = diceArray[0]  # BOOST
+        self.sdice = diceArray[1]  # SETBACK
+        self.adice = diceArray[2]  # ABILITY
+        self.ddice = diceArray[3]  # DIFFICULTY
+        self.pdice = diceArray[4]  # PROFICIENCY
+        self.cdice = diceArray[5]  # CHALLENGE
 
     def displayResults(self):
         """
@@ -35,8 +28,8 @@ class GenesysDiceRoller:
         :return: Nothing
         """
         print("")
-        rolled = 'Dice Rolled => (B/S/A/D/P/C):({}/{}/{}/{}/{}/{})'.format\
-            (self.bdice,self.sdice,self.adice,self.ddice,self.pdice,self.cdice)
+        rolled = 'Dice Rolled => (B/S/A/D/P/C):({}/{}/{}/{}/{}/{})'.format \
+            (self.bdice, self.sdice, self.adice, self.ddice, self.pdice, self.cdice)
         print(rolled)
         # Following functions will roll the actual dice
         self.__rollDice(self.bdice, boost)  # BOOST
@@ -46,26 +39,17 @@ class GenesysDiceRoller:
         self.__rollDice(self.pdice, proficiency)  # PROFICIENCY
         self.__rollDice(self.cdice, challenge)  # CHALLENGE
 
-
         # PRINT OUT RESULTS FROM THE DICE ROLLING
         print("You rolled the following => ", self.__displayDiceRolled)
         print("")
         print("Detailed Results")
 
-        goodResults = "Success = {}     Advantages = {}     Triumps = {}".format(self.__success, self.__advantages, self.__triump)
-        badResults  = "Failure = {}     Threats    = {}     Dispairs = {}".format(self.__failure, self.__threat, self.__dispair)
+        goodResults = "Success = {}     Advantages = {}     Triumps = {}".format(self.__success, self.__advantages,
+                                                                                 self.__triump)
+        badResults = "Failure = {}     Threats    = {}     Dispairs = {}".format(self.__failure, self.__threat,
+                                                                                 self.__dispair)
         # NET RESULTS SECTION
-        netResults  = ""
-        if (self.__netSuccess < 0):
-            netResults += "Dice rolled resulted in a failure. It had {} net failures".format(abs(self.__netSuccess))
-        elif (self.__netSuccess == 0):
-            netResults += "Dice rolled did not fail or succeed since it has 0 net successes"
-        else:
-            netResults += "Dice rolled results in a success. It had {} successes ".format(self.__netSuccess)
-        if (self.__netAdvantages < 0):
-            netResults += " and {} threats".format(abs(self.__netAdvantages))
-        else:
-            netResults += " and {} advantages".format(self.__netAdvantages)
+        netResults = self.PrintOutResults()
 
         # Lets print out the final results
         print(goodResults)
@@ -126,3 +110,24 @@ class GenesysDiceRoller:
         # COMPUTE NET INFORMATION
         self.__netAdvantages = (self.__advantages - self.__threat)
         self.__netSuccess = (self.__success - self.__failure)
+
+    def PrintOutResults(self) -> object:
+        """
+        Displays a pretty printout of the results to the user
+        :return: string containing the results
+        """
+        netResults = ""
+
+        if self.__netSuccess > 0:
+            netResults = netResults + "Congrats. You succeeded at your task. You rolled a total of "
+            netResults = netResults + str(self.__netSuccess) + " successes"
+        elif self.__netSuccess == 0:
+            netResults = "Your roll did not either succeed or fail since you did not roll any successes or failures"
+        else:
+            netResults = "Sorry. You failed at the task. You rolled a total of " + str(abs(self.__netSuccess)) + " failures"
+        if self.__netAdvantages < 0:
+            netResults = netResults + "\n" + "You also generated a total of " + str(abs(self.__netAdvantages)) + " threats"
+        else:
+            netResults = netResults + "\n" + "You also generated a total of " + str(abs(self.__netAdvantages)) + " advantages"
+
+        return netResults
